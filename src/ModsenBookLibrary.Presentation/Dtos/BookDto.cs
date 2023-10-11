@@ -8,7 +8,11 @@ public record BookDto(
     string ISBN,
     List<GenreDto> Genres,
     List<UserDto> Authors,
-    List<BookDistribution> BookDistributions);
+    List<BookDistributionDto> BookDistributions);
+
+public record BookListDto(Guid Id,
+    string Name,
+    string Description);
 
 public record CreateBookDto(
     string Name,
@@ -20,7 +24,4 @@ public record CreateBookDto(
 public record UpdateBookDto(
     Guid Id,
     string Name,
-    string Description,
-    string ISBN,
-    IEnumerable<Guid> GenresIds,
-    IEnumerable<Guid> AuthorsIds);
+    string Description);

@@ -9,6 +9,4 @@ public record BookDistributionDto(
     DateTime ShouldReturnAt,
     BookDistributionStatus Status);
 
-public record CreateBookDistributionDto(Guid UserId, Guid BookId, DateTime ShouldReturnAt);
-
-public record ReturnBookDto(Guid BookId);
+public record CreateBookDistributionDto(Guid UserId, DateTime ShouldReturnAt);
