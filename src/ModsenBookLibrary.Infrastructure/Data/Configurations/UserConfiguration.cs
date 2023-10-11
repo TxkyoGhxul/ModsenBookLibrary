@@ -17,7 +17,7 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
             email => email.Value,
             value => Email.From(value));
 
-        builder.Property(b => b.Password).IsRequired().HasMaxLength(25);
+        builder.Property(b => b.Password).IsRequired().HasMaxLength(100);
 
     }
 }
