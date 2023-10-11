@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModsenBookLibrary.Application.Commands.RoleCommands.Create;
 using ModsenBookLibrary.Application.Models;
@@ -9,6 +10,7 @@ using System.Net;
 
 namespace ModsenBookLibrary.Presentation.Controllers;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class RoleController : ControllerBase

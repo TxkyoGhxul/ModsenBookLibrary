@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModsenBookLibrary.Application.Commands.BookCommands.Create;
 using ModsenBookLibrary.Application.Commands.BookCommands.Delete;
 using ModsenBookLibrary.Application.Commands.BookCommands.Update;
+using ModsenBookLibrary.Application.Commands.BookDistributionCommands.Create;
+using ModsenBookLibrary.Application.Commands.BookDistributionCommands.Update;
 using ModsenBookLibrary.Application.Models;
 using ModsenBookLibrary.Application.Queries.BookQueries.GetSingle;
 using ModsenBookLibrary.Application.Sorters.Fields;
@@ -12,6 +15,7 @@ using System.Net;
 
 namespace ModsenBookLibrary.Application.Queries.BookQueries.GetRange.Controllers;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class BookController : ControllerBase
@@ -31,7 +35,7 @@ public class BookController : ControllerBase
     /// <param name="id">Id of the book</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Book if found, otherwise, bad request with error message</returns>
-    [HttpGet("id:guid")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(BookDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken = default)
@@ -48,7 +52,7 @@ public class BookController : ControllerBase
     /// <param name="isbn">Book isbn</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Book if found, otherwise, bad request with error message</returns>
-    [HttpGet("isbn:length(5, 25)")]
+    [HttpGet("{isbn:length(5, 25)}")]
     [ProducesResponseType(typeof(BookDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetByISBN(string isbn, CancellationToken cancellationToken = default)
@@ -70,7 +74,7 @@ public class BookController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>List of all books</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(PagedList<BookDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(PagedList<BookListDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetAll(int pageNumber,
         int pageSize,
@@ -82,7 +86,7 @@ public class BookController : ControllerBase
         var command = new GetAllBooksQuery(searchText, field, ascending, pageNumber, pageSize);
         var result = await _sender.Send(command, cancellationToken);
 
-        return result.Match<IActionResult>(succ => Ok(succ.Map(_mapper.Map<BookDto>)), BadRequest);
+        return result.Match<IActionResult>(succ => Ok(succ.Map(_mapper.Map<BookListDto>)), BadRequest);
     }
 
     /// <summary>
@@ -108,7 +112,7 @@ public class BookController : ControllerBase
     /// <param name="id">Id of book to delete</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Deleted book</returns>
-    [HttpDelete("id:guid")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(BookDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
@@ -130,7 +134,42 @@ public class BookController : ControllerBase
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> Update(UpdateBookDto dto, CancellationToken cancellationToken = default)
     {
-        var command = new UpdateBookCommand(dto.Id, dto.Name, dto.Description, dto.ISBN, dto.GenresIds, dto.AuthorsIds);
+        var command = new UpdateBookCommand(dto.Id, dto.Name, dto.Description);
+        var result = await _sender.Send(command, cancellationToken);
+
+        return result.Map(_mapper.Map<BookDto>).Match<IActionResult>(Ok, BadRequest);
+    }
+
+    /// <summary>
+    /// Distributes a book for a user
+    /// </summary>
+    /// <param name="bookId">Id of distributing book for a user</param>
+    /// <param name="dto">Dto for distribute a book for a user</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Distributed book</returns>
+    [HttpPost("{bookId:guid}/distribute")]
+    [ProducesResponseType(typeof(BookDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+    public async Task<IActionResult> DistributeBook(Guid bookId, CreateBookDistributionDto dto, CancellationToken cancellationToken = default)
+    {
+        var command = new CreateBookDistributionCommand(dto.UserId, bookId, dto.ShouldReturnAt);
+        var result = await _sender.Send(command, cancellationToken);
+
+        return result.Map(_mapper.Map<BookDto>).Match<IActionResult>(Ok, BadRequest);
+    }
+
+    /// <summary>
+    /// Returns a book to the library
+    /// </summary>
+    /// <param name="bookId">Id of returning book</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Returned book</returns>
+    [HttpPut("{bookId:guid}/return")]
+    [ProducesResponseType(typeof(BookDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+    public async Task<IActionResult> DistributeBook(Guid bookId, CancellationToken cancellationToken = default)
+    {
+        var command = new ReturnBookCommand(bookId);
         var result = await _sender.Send(command, cancellationToken);
 
         return result.Map(_mapper.Map<BookDto>).Match<IActionResult>(Ok, BadRequest);

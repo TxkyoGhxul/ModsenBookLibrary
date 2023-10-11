@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModsenBookLibrary.Application.Commands.GenreCommands.Create;
 using ModsenBookLibrary.Application.Models;
@@ -44,6 +45,7 @@ public class GenreController : ControllerBase
     /// <param name="dto">Dto for creating a genre</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Created genre if success, otherwise, bad request with error message</returns>
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(typeof(GenreDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]

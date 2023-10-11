@@ -26,7 +26,7 @@ public class UserController : ControllerBase
     /// <param name="dto">Dto for login to the app</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>User token if success, otherwise, unauthorized</returns>
-    [HttpPost]
+    [HttpPost(nameof(Login))]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
     public async Task<IActionResult> Login(LoginDto dto, CancellationToken cancellationToken = default)
@@ -43,7 +43,7 @@ public class UserController : ControllerBase
     /// <param name="dto">Dto for register a user</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Registered user if success, otherwise, bad reqwuest with error message</returns>
-    [HttpPost]
+    [HttpPost(nameof(Register))]
     [ProducesResponseType(typeof(UserDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> Register(RegisterDto dto, CancellationToken cancellationToken = default)
