@@ -36,7 +36,7 @@ public class PagedList<T>
         return new(items, count, pageNumber, pageSize);
     }
 
-    public async Task<PagedList<TOut>> Map<TOut>(Func<T, TOut> mappingFunc)
+    public PagedList<TOut> Map<TOut>(Func<T, TOut> mappingFunc)
     {
         var newItems = Items.Select(mappingFunc).ToList();
         return new(newItems, TotalCount, PageNumber, PageSize);
