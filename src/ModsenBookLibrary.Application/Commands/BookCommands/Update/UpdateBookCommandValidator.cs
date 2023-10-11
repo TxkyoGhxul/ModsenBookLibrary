@@ -11,7 +11,5 @@ public class UpdateBookCommandValidator : AbstractValidator<UpdateBookCommand>
         RuleFor(c => c.Name).Length(3, 35);
 
         RuleFor(c => c.Description).Length(3, 350);
-
-        RuleFor(c => c.ISBN).Length(10, 25);
     }
 }

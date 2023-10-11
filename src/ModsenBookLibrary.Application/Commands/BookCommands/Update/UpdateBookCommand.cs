@@ -5,8 +5,5 @@ namespace ModsenBookLibrary.Application.Commands.BookCommands.Update;
 public record UpdateBookCommand(
     Guid Id,
     string Name,
-    string Description,
-    string ISBN,
-    IEnumerable<Guid> GenresIds,
-    IEnumerable<Guid> AuthorsIds)
+    string Description)
     : IUpdateCommand<Book>;
