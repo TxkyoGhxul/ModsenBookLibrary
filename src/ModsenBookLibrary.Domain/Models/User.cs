@@ -8,9 +8,9 @@ public class User : NamedEntity
 
     public string Password { get; set; }
 
-    public virtual List<Role> Roles { get; set; }
+    public virtual List<Role> Roles { get; set; } = new();
 
-    public virtual List<Book> Books { get; set; }
+    public virtual List<Book> Books { get; set; } = new();
 
     public User()
     {

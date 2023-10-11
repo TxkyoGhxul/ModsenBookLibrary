@@ -8,7 +8,7 @@ public class Book : NamedEntity
     public ISBN ISBN { get; set; }
     public virtual List<Genre> Genres { get; set; }
     public virtual List<User> Authors { get; set; }
-    public List<BookDistribution> BookDistributions { get; set; }
+    public virtual List<BookDistribution> BookDistributions { get; set; } = new();
 
     public Book() //EF needed
     {

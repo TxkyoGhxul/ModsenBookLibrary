@@ -13,5 +13,26 @@ public class BookDistribution : Entity
     public DateTime TakenAt { get; set; }
     public DateTime ShouldReturnAt { get; set; }
 
-    public BookDistributionStatus Status { get; set; }
+    public BookDistributionStatus Status { get; private set; }
+
+    public BookDistribution()
+    {
+    }
+
+    public BookDistribution(Guid userId, Guid bookId, DateTime shouldReturnAt)
+    {
+        UserId = userId;
+        BookId = bookId;
+        TakenAt = DateTime.UtcNow;
+        ShouldReturnAt = shouldReturnAt;
+        Status = BookDistributionStatus.Taken;
+    }
+
+    public void ReturnBook()
+    {
+        if (Status != BookDistributionStatus.Returned)
+        {
+            Status = BookDistributionStatus.Returned;
+        }
+    }
 }
