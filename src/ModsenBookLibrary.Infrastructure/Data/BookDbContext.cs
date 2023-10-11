@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ModsenBookLibrary.Application.Interfaces;
-using ModsenBookLibrary.Application.Queries.BookQueries.GetSingle;
 using ModsenBookLibrary.Domain.Models;
 using System.Reflection;
 

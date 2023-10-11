@@ -8,6 +8,7 @@ using Serilog;
 using ModsenBookLibrary.WebApi.OptionsSetup;
 using ModsenBookLibrary.Infrastructure.Auth;
 using ModsenBookLibrary.WebApi.Middlewares;
+using ModsenBookLibrary.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var rolesInitializer = scope.ServiceProvider.GetService<RolesInitializer>()!;
+    rolesInitializer.InitializeRoles();
 }
 
 app.UseMiddleware<LoggingMiddleware>();
