@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using ModsenBookLibrary.Application.Interfaces;
 using ModsenBookLibrary.Infrastructure.Auth;
 using ModsenBookLibrary.Infrastructure.Data;
 using ModsenBookLibrary.Infrastructure.Repositories;
+using System.Text;
 
 namespace ModsenBookLibrary.Infrastructure.Extensions;
 public static class ServiceCollectionExtensions
@@ -32,10 +34,30 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection InjectJwtBearer(this IServiceCollection services)
+    public static IServiceCollection InjectJwtBearer(this IServiceCollection services, IConfiguration config)
     {
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer();
+        services.AddAuthentication(x =>
+        {
+            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(x =>
+        {
+            x.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = config["Jwt:Issuer"],
+                ValidAudience = config["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!)),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true
+            };
+        });
+
+        services.AddAuthorization();
 
         services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
 
