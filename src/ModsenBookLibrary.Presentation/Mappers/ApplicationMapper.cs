@@ -8,6 +8,7 @@ internal class ApplicationMapper : Profile
     public ApplicationMapper()
     {
         CreateMap<Book, BookDto>();
+        CreateMap<Book, BookListDto>();
         CreateMap<BookDistribution, BookDistributionDto>();
         CreateMap<Genre, GenreDto>();
         CreateMap<Role, RoleDto>();
