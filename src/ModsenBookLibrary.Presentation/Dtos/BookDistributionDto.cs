@@ -8,3 +8,7 @@ public record BookDistributionDto(
     DateTime TakenAt,
     DateTime ShouldReturnAt,
     BookDistributionStatus Status);
+
+public record CreateBookDistributionDto(Guid UserId, Guid BookId, DateTime ShouldReturnAt);
+
+public record ReturnBookDto(Guid BookId);
