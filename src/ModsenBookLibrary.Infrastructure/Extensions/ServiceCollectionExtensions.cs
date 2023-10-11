@@ -21,6 +21,15 @@ public static class ServiceCollectionExtensions
             options.UseLazyLoadingProxies();
         });
 
+        services.AddSingleton((provider) =>
+        {
+            var initializer = new RolesInitializer(provider.GetService<BookDbContext>()!);
+
+            initializer.InitializeRoles();
+
+            return initializer;
+        });
+
         services.AddScoped<IBookDbContext, BookDbContext>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
