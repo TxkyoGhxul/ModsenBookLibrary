@@ -1,6 +1,5 @@
 ﻿using ModsenBookLibrary.Application.Interfaces;
 using ModsenBookLibrary.Application.Models;
-using ModsenBookLibrary.Domain.Enums;
 using ModsenBookLibrary.Domain.Exceptions;
 using ModsenBookLibrary.Domain.Models;
 
@@ -14,7 +13,7 @@ internal class CreateBookDistributionCommandHandler
     public CreateBookDistributionCommandHandler(
         IRepository<Book> repository,
         IUnitOfWork unitOfWork,
-        IRepository<User> userRepository) 
+        IRepository<User> userRepository)
         : base(repository, unitOfWork)
     {
         _userRepository = userRepository;
@@ -34,12 +33,7 @@ internal class CreateBookDistributionCommandHandler
             return new EntityNotFoundException(request.UserId, typeof(User));
         }
 
-        var distribution = new BookDistribution
-        {
-            UserId = request.UserId,
-            BookId = request.BookId,
-            Status = BookDistributionStatus.Taken
-        };
+        var distribution = new BookDistribution(request.UserId, request.BookId, request.ShouldReturnAt);
 
         book.BookDistributions?.Add(distribution);
 

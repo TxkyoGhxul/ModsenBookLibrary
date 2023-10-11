@@ -9,5 +9,7 @@ internal class CreateBookDistributionCommandValidator : AbstractValidator<Create
         RuleFor(c => c.BookId).NotEmpty();
 
         RuleFor(c => c.UserId).NotEmpty();
+
+        RuleFor(c => c.ShouldReturnAt).GreaterThan(DateTime.UtcNow);
     }
 }
