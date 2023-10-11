@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ModsenBookLibrary.Application.Helpers;
 using ModsenBookLibrary.Application.Interfaces;
 using ModsenBookLibrary.Application.Models;
 using ModsenBookLibrary.Domain.Exceptions;
@@ -17,13 +18,16 @@ internal class LoginCommandHandler : BaseCommandHandler<User>, ICreateCommandHan
 
     public async Task<Result<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var user = await _repository
-            .Get(u => u.Email == request.Email && u.Password == request.Password)
-            .FirstOrDefaultAsync(cancellationToken);
-
+        var user = await _repository.Get(u => u.Email == request.Email).FirstOrDefaultAsync(cancellationToken);
         if (user == null)
         {
-            return new EntityNotFoundException("User not found. Check login and password");
+            return new EntityNotFoundException($"User with email ({request.Email}) not found");
+        }
+
+        var validPassword = HashHelper.GetPasswordHash(request.Password) == user.Password;
+        if (!validPassword)
+        {
+            return new InvalidDataException("Passwords are not the same");
         }
 
         var token = _tokenProvider.GetJwtToken(user);

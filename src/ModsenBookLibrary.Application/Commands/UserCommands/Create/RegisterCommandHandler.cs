@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ModsenBookLibrary.Application.Helpers;
 using ModsenBookLibrary.Application.Interfaces;
 using ModsenBookLibrary.Application.Models;
 using ModsenBookLibrary.Domain.Constants;
@@ -37,7 +38,8 @@ internal class RegisterCommandHandler : BaseCommandHandler<User>, ICreateCommand
             return new EntityNotFoundException("User role not found");
         }
 
-        var user = new User(request.Name, email, request.Password);
+        var user = new User(request.Name, email, HashHelper.GetPasswordHash(request.Password));
+        user.Roles.Add(userRole);
 
         _repository.Create(user);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
