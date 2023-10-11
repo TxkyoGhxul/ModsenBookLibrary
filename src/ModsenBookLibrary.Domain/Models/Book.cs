@@ -6,8 +6,8 @@ public class Book : NamedEntity
 {
     public string Description { get; set; }
     public ISBN ISBN { get; set; }
-    public List<Genre> Genres { get; set; }
-    public List<User> Authors { get; set; }
+    public virtual List<Genre> Genres { get; set; }
+    public virtual List<User> Authors { get; set; }
     public List<BookDistribution> BookDistributions { get; set; }
 
     public Book() //EF needed
